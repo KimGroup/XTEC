@@ -1,5 +1,8 @@
 Xray TEmperature Clustering (XTEC)
+
 Venderley et al. (https://arxiv.org/abs/2008.03275).
+
+
 When the temperature  T  is lowered below a certain threshold, the system can give way to an ordered state. Hence the temperature ( T ) evolution of the XRD intensity for reciprocal space point  q⃗  ,  I(q⃗ ,T) , must be qualitatively different if the given reciprocal space point  q⃗   reflects order parameters or their fluctuations. Tracking the temperature evolution of thousands of Brillouin zones to identify systematic trends and correlations in any comprehensive manner is impossible to achieve manually without selection bias.
 
 XTEC is an unsupervised and interpretable ML algorithm that can identify the order parameters and their fluctuations from the voluminous data by clustering the temperature series associated with a given  q⃗  ,  I(q⃗ ,T) , according to qualitative features in the temperature dependence.
