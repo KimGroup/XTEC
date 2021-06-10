@@ -20,7 +20,7 @@ At the core of XTEC is a Gaussian Mixture Model (GMM) clustering to identify dis
 
 ![image](https://user-images.githubusercontent.com/72625766/121227481-9b6a1f80-c859-11eb-8de0-e4d01a637aa3.png)
 
-To cluster distinct  I(g)  trajectories given the collection of series  {I(g0),I(g1),…,I(gN−1)}  (N=2 in this case), the raw trajectories (in panel (a)) can be mapped to a simple Gaussian Mixture Model (GMM) clustering problem on a  N  dimensional space (panel (b)). In this case, GMM clustering identifies three distinct clusters color-coded as red, blue and green. From the GMM cluster mean and variance (panel (b)), we get the distinct trajectories of  I(g)  and their variance (panel (c)).
+To cluster distinct  I(g)  trajectories given the collection of series  {I(g0),I(g1),…,I(gN−1)}  (N=2 in the above figure), the raw trajectories (in panel (a)) can be mapped to a simple Gaussian Mixture Model (GMM) clustering problem on a  N  dimensional space (panel (b)). In the above figure, GMM clustering identifies three distinct clusters color-coded as red, blue and green. From the GMM cluster mean and variance (panel (b)), we get the distinct trajectories of  I(g)  and their variance (panel (c)).
 
 Note that  g  can be any parameter like temperature, time, energy etc. Hence apart from temperature series data, you can adapt XTEC to analysie any other parametric dependence like time or energy series data.
 
