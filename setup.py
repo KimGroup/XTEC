@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name="XTEC",
@@ -8,8 +8,9 @@ setup(
     maintainer="Krishnanand Mallayya",
     maintainer_email="krishnanandmallayya@gmail.com",
     url="https://cels.anl.gov/axmas/",
-    packages=["xtec"],
     download_url="https://github.com/KimGroup/XTEC",
+    package_dir={"": "src"},
+    packages=find_packages(where="src"),
     python_requires=">=3.7",
     install_requires=["numpy", "matplotlib", "scikit-learn", "scipy"],
     classifiers=[

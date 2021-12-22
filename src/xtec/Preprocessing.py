@@ -285,21 +285,7 @@ class Threshold_Background(object):
         )  # returns prob density y= freq/[(total #x)dx] , and x-bins
 
     def KL(self, x_bins, y_bins, ind, mean, std_dev):
-        """Returns KL divergence between p(x): y_bins and q(x): a Gaussian.
-
-        Parameters
-        ----------
-        x_bins : [type]
-            [description]
-        y_bins : [type]
-            [description]
-        ind : [type]
-            [description]
-        mean : [type]
-            [description]
-        std_dev : [type]
-            [description]
-        """
+        """Returns KL divergence between p(x): y_bins and q(x): a Gaussian."""
 
         # normalized Gaussian, 1e-12 to avoid zeros in q(x)
         Model = self.Gaussian(x_bins[:ind], mean, std_dev) + 1e-12
