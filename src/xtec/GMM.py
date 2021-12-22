@@ -540,22 +540,22 @@ class GMM(object):
 
         Parameters
         ----------
-        threshold : [type]
+        threshold : 
             class Threshold_Background from Preprocessing
-        figsize_ : [type], optional
+        figsize_ : tuple, optional,
             size of image, by default None
-        data_ind : [type], optional
+        data_ind : ndarray, optional
             (H,K,L) or (H,K) indices of the clustered data,
             by default None. shape=(num_data,2) or (num_data,3),
-        slice_ind : [type], optional
+        slice_ind : int, optional
             If 3D, the index along which to take the data slice,
             by default None
-        axis_ : [type], optional
+        axis_ : int, optional
             Axis_ of slice_ind, by default None. If data is 3D, set 0
             for L plane, 1 for K plane and 2 for H plane,
-        cluster_assignments : [type], optional
+        cluster_assignments : ndarray, optional
             [description], by default None
-        cluster_list : [type], optional
+        cluster_list : array like, optional
             List of cluster numbers 0,1,2 etc. to be plotted, by default None.
             The remaining clusters if any will show as grey.
         """
