@@ -8,7 +8,7 @@ At synchrotron sources, such as the Advanced Photon Source (APS), it is now rout
 
 These experimental methods are ideal for investigating the temperature dependence of structural correlations, whether short- or long-range. For example, if there is a structural phase transition, below which new superlattice peaks emerge owing to a reduction in symmetry, these experiments will contain information on the temperature dependence both of the order parameter, *i.e.*, the superlattice peak intensities, and the critical fluctuations above the transition. However, ensuring that all components of the order parameter, including secondary order parameters, or all relevant fluctuations have been identified is not generally possible by manual inspection alone. 
 
-To meet this challenge, the application, *XRD Temperature Clustering (X-TEC)*, uses unsupervised machine learning, in particular, the Gaussian Mixture Model, to extract from the billions of recorded pixels a reduced set of temperature trajectories that correspond to distinct physical processes in the material.  The trajectories are rescaled so that we can compare trajectories at different intensities, focusing on their temperature dependence rather than their absolute scale. A technique known as label smoothing averages cluster assignments of neighboring pixels to enforce local correlations. *X-TEC* is able to extract both the temperature dependence and the Q-dependence of emergent order parameters, such as charge-density-wave modulations, without any prior input. It has also been used to separate superlattice peaks from the critical fluctuations that surround them.
+To meet this challenge, the application, *XRD Temperature Clustering (XTEC)*, uses unsupervised machine learning, in particular, the Gaussian Mixture Model, to extract from the billions of recorded pixels a reduced set of temperature trajectories that correspond to distinct physical processes in the material.  The trajectories are rescaled so that we can compare trajectories at different intensities, focusing on their temperature dependence rather than their absolute scale. A technique known as label smoothing averages cluster assignments of neighboring pixels to enforce local correlations. *XTEC* is able to extract both the temperature dependence and the Q-dependence of emergent order parameters, such as charge-density-wave modulations, without any prior input. It has also been used to separate superlattice peaks from the critical fluctuations that surround them.
 
 ## Methods
 
@@ -16,7 +16,7 @@ When the temperature `T`  is lowered below a certain threshold, the system can g
 
 *X-TEC* is an unsupervised and interpretable machine learning (ML) algorithm that can identify the order parameters and their fluctuations from the voluminous data by clustering the temperature series associated with a given `q`: `I(q,T)` , according to qualitative features in the temperature dependence.
 
-At the core of XTEC is a Gaussian Mixture Model (GMM) clustering to identify disctint temperature trajectories. The figure below shows a simplified illutration of GMM clustering behind XTEC.
+At the core of *XTEC* is a Gaussian Mixture Model (GMM) clustering to identify disctint temperature trajectories. The figure below shows a simplified illutration of GMM clustering behind *XTEC*.
 
 ![image](https://user-images.githubusercontent.com/72625766/121227481-9b6a1f80-c859-11eb-8de0-e4d01a637aa3.png)
 
@@ -26,16 +26,16 @@ Note that  `g`  can be any parameter like temperature, time, energy etc. Hence a
 
 ## Installation
 
-Released versions of *X-TEC* can be installed using either
+Released versions of *XTEC* can be installed using either
 
 ```
-    $ pip install x-tec
+    $ pip install xtec
 ```
 
 or by cloning the Git repository and installing from source:
 
 ```
-    $ git clone https://github.com/KimGroup/x-tec
+    $ git clone https://github.com/KimGroup/XTEC
 ```
 
 To install in the standard Python location:
@@ -52,4 +52,9 @@ To install in an alternate location:
 
 ## Tutorials
 
-The Jupyter notebook, `XTEC_Tutorial_Notebook.ipynb`, shows XTEC in action. This notebook shows how XTEC identifies a charge density wave (CDW) ordering in reciprocal space from temperature series voluminous XRD data collected at Advanced Photon Source on Sr<sub>3</sub>Rh<sub>4</sub>Sn<sub>13</sub>: a a quasi-skutterudite family which shows CDW ordering below a critical temperature.
+There are three Jupyter notebooks, which can be downloaded from this
+repository to show XTEC in action. They show how XTEC identifies a 
+charge density wave (CDW) ordering in reciprocal space from temperature 
+series voluminous XRD data collected at Advanced Photon Source on 
+Sr<sub>3</sub>Rh<sub>4</sub>Sn<sub>13</sub>: a a quasi-skutterudite 
+family which shows CDW ordering below a critical temperature.
