@@ -31,7 +31,9 @@ class GMM(object):
     Examples
     --------
         1) An example to cluster with GMM without label smoothing:
-
+        
+        from xtec.GMM import GMM   
+        
         num_clusters = 2
         clusterGMM=GMM(data, num_clusters)
         clusterGMM.RunEM()
@@ -44,15 +46,18 @@ class GMM(object):
         # assignment
 
         2) Example to cluster with label smoothing and periodic kernel
-            (see GMM_kernel.py for constructing Markov matrix):
+            (see GMM_kernel for constructing Markov matrix):
 
         # Generate Markov matrix to be used between E and M step to
         # diffuse cluster probabilities with neighbouring data
-
+        
+        from xtec.GMM import GMM   
+        from xtec.GMM import GMM_kernels   
+        
         data_inds = threshold.ind_high_std_dev
         L_scale = 0.2
         kernel_type = 'periodic'
-        unit_cell_shape = np.array([20,20])
+        unit_cell_shape = np.array([20,20,20])
         uniform_similarity = True
         Markov_matrix = Build_Markov_Matrix(data_inds, L_scale,
                                             kernel_type,
@@ -62,7 +67,8 @@ class GMM(object):
         # GMM clustering with label smoothing
         num_clusters = 2
         clusterGMM=GMM(data, num_clusters)
-        clusterGMM.RunEM(True, Markov_matrix, 1)
+        smoothing_iterations=1
+        clusterGMM.RunEM(True, Markov_matrix, smoothing_iterations)
 
         print(clusterGMM.num_per_cluster)
         cluster_assignments = clusterGMM.cluster_assignments
@@ -98,10 +104,10 @@ class GMM(object):
             Number of batches, by default 1
         alpha : float, optional
             decay exponent of step-size 0.5 < alpha < 1, by default 0.7
-        tol : [type], optional
+        tol : float, optional
             Tolerance for the convergence of loglikelihood, by default 1e-5
         max_batch_epoch : int, optional
-            Maxiimum number of batch iterations, by default 50
+            Maximum number of batch iterations, by default 50
         max_full_epoch : int, optional
             Maximum number of iterations on full dataset, by default 500
         verbose : bool, optional
@@ -176,9 +182,9 @@ class GMM(object):
         label_smoothing_flag : bool, optional
             If True implements label smoothing between E and M step,
             by default False
-        Markov_matrix : [type], optional
+        Markov_matrix : <class 'scipy.sparse.csr.csr_matrix'>, optional
             Adjacency matrix for label smoothing (when smoothing_flag=True),
-            by default None. Use GMM_kernels.py to construct Markov
+            by default None. Use GMM_kernels to construct Markov
             matrix with local or periodic kernel
         smoothing_iterations : int, optional
             Number of times Markov_matrix is applied to cluster prob
@@ -785,10 +791,6 @@ class GMM_kernels(object):
         zero_cutoff : [type], optional
             Cutoff to select nonzero elements of Markov matrix, by default 1e-2
 
-        Returns
-        -------
-        [type]
-            [description]
         """
         print("\n\tBuilding Adjacency Matrix,  ...")
         import time
