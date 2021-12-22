@@ -668,7 +668,6 @@ class GMM(object):
         RGBs = [colors.to_rgb(color) for color in color_list]
 
         import matplotlib.pyplot as plt
-        from mpl_toolkits.mplot3d import Axes3D
 
         fig = plt.figure(dpi=600)
         ax = fig.add_subplot(111, projection="3d")

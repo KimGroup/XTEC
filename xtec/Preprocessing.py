@@ -493,8 +493,6 @@ class Threshold_Background(object):
         Y = Y[mask]
         Z = Z[mask]
 
-        from mpl_toolkits.mplot3d import Axes3D
-
         fig = plt.figure(dpi=70)
         ax = fig.add_subplot(111, projection="3d")
         ax.scatter(X, Y, Z, c=rgba_mat_subset, s=30, edgecolors="none")
