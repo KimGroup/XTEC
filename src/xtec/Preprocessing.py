@@ -7,16 +7,21 @@ This module performs the preprocessing steps to be used before
 clustering. Here, the raw data (2D slice or 3D) is processed to remove
 zeros (Mask_Zeros), the low intensity background noise
 (Threshold_Background), and remove low variance temperature
-trajectories (Get_High_Variance, and Get_High_Variance_About_Mean).
+trajectories (Get_High_Variance).
 
-It was written by Jordan Venderley, with subsequent modifications by
+Written by Jordan Venderley, and modifications by
 Krishnanand Mallayya.
 
 A snippet to applying thresholding is,
 
+    from xtec.Preprocessing import Mask_Zeros
+    from xtec.Preprocessing import Threshold_Background
+   
     I=np.array(data)
+
     # remove points where I=0 for all T (mean_T =0)
     masked    = Mask_Zeros(I, 'zero_mean')
+
     # remove background from maksed zero data
     threshold = Threshold_Background(masked, None, 'KL')
 
@@ -46,9 +51,9 @@ class Mask_Zeros(object):
     Attributes
     ----------
     data_non_zero : array-like
-        Masked data points.
+        Masked data points. shape=(num_T, num_data_non_zero)
     ind_cols_nonzero : array-like
-        HKL indices of the masked data.
+        HKL indices of the masked data. shape=(num_data_non_zero, 3)
     data_shape : tuple
         Shape of input data.
     """
@@ -58,8 +63,8 @@ class Mask_Zeros(object):
 
         Parameters
         ----------
-        data : array-like
-            Intensity in 2D or 3D as a function of temperature.
+        data : array-like. Shape=(num_T, num_L, num_K, num_H) 
+            Intensity (I) in 2D or 3D as a function of temperature (T).
         mask_type : 'zero_mean' or 'any_zeros', optional
             Type of mask used to remove data, by default 'zero_mean'.
             When set to 'zero_mean', I=0 for all T (mean_T=0), but when set to
@@ -98,20 +103,20 @@ class Threshold_Background(object):
 
     Attributes
     ----------
-    data_thresholded : array-like
-        Thresholded data
-    ind_thresholded : array-like
+    data_thresholded : array-like, shape=(num_T,num_data_threshed)
+        Thresholded data. 
+    ind_thresholded : array-like, shape=(num_data_threshed,3)
         HKL indices of the thresholded data
-    thresholded : array-like
+    thresholded : array-like, shape=(num_T, num_L, num_K, num_H)
         Values set to 0 or 1 depending on whether the corresponding pixel is
         thresholded.
-    data_high_std_dev : array-like
+    data_high_std_dev : array-like, shape=(num_T, num_high_std_data)
         High variance trajectories.
-    ind_high_std_dev : array-like
+    ind_high_std_dev : array-like, shape=(num_high_std_data, 3)
         HKL indices of high std trajectories
-    data_low_std_dev : array-like
+    data_low_std_dev : array-like, shape=(num_T, num_low_std_data)
         Low variance trajectories
-    ind_low_std_dev : array-like
+    ind_low_std_dev : array-like, shape=(num_low_std_data,3)
         HKL indices of low var trajectories
     """
 
@@ -121,15 +126,16 @@ class Threshold_Background(object):
         Parameters
         ----------
         mask : Mask_Zeros
-            HKL indices of the non-zero data
-        bin_size : [type], optional
+             Non-zero data
+        bin_size : float, optional
             Bin size for the intensity distribution, by default None.
             If None, the optimal bin size is estimated from Freedman Diaconis
             rule.
-        threshold_type : 'KL', 'simple' or 'no thresh, optional
-            Threshold type, by default 'KL'. 'KL' uses the Kullback-Leibler
-            method. 'simple' uses a `mean+2sigma` cutoff, and 'no thresh' sets
-            the cutoff to 0.
+        threshold_type : 'KL'|'simple'|'no thresh', optional
+            by default 'KL'.
+            'KL' uses the Kullback-Leibler method.
+            'simple' uses a `mean+2sigma` cutoff,
+             'no thresh' sets the cutoff to 0.
         max_iter : int, optional
             Maximum number of iterations, by default 100
         """
@@ -228,12 +234,12 @@ class Threshold_Background(object):
         return rescale_data
 
     def Get_High_Variance(self, data, std_dev_cutoff=0.5):
-        """Gets data whose std dev vs temperature > std_dev_cutoff
+        """Gets data whose std dev in temperature > std_dev_cutoff
 
         Parameters
         ----------
-        data : array-like
-            [description]
+        data : array-like, shape=(num_T, num_data)
+            Thresholded and rescaled data
         std_dev_cutoff : float, optional
             Standard deviation cut-off, by default 0.5
         """
@@ -408,10 +414,16 @@ class Threshold_Background(object):
         self, figsize_=(10, 10), slice_ind=None, axis_=None
     ):
         """Plots the 2D figure showing points that pass thresholding.
+        These are displayed with lightgrey pixels.
 
-        These are displayed with lightgrey pixels. If the data is 3D, then
-        slice_ind selects the index of the 2D slice along axis_ = 0, 1 or 2 to
-        be plotted.
+        Parameters
+        ----------
+        slice_ind : int, optional
+            If 3D, the index along which to take the data slice,
+            by default None
+        axis_ : int, optional
+            Axis_ of slice_ind, by default None. Set 0
+            for L plane, 1 for K plane and 2 for H plane,
         """
         import matplotlib.pyplot as plt
         from matplotlib import colors
@@ -490,14 +502,16 @@ class Threshold_Background(object):
 
 
 class Peak_averaging(object):
-    """Averages intensity over a peak.
+    """Averages intensities within each peak.
 
     Attributes
     ----------
-    peak_avg_data : array-like
-        Thresholded data
-    peak_avg_ind_list : array-like
-        HKL indices of the thresholded data
+    peak_avg_data : array-like, shape=(num_T, num_peaks)
+        Peak averaged data for each peak
+        (cluster of conneced pixels)
+    peak_avg_ind_list : list of arrays
+        i^th list entry gives  HKL indices of the
+        pixels inside the i^th peak
     """
 
     def __init__(self, intensity, threshold):
@@ -505,10 +519,10 @@ class Peak_averaging(object):
 
         Parameters
         ----------
-        intensity : array-like
+        intensity : array-like, shape=(num_T, num_L, num_K, num_H)
             Intensity to be averaged.
-        threshold : float
-            Threshold value
+        threshold : class Threshold_Background
+            Threshold data 
         """
 
         # identify connected features
