@@ -79,3 +79,7 @@ The XRD data on Sr<sub>3</sub>Rh<sub>4</sub>Sn<sub>13</sub> collected at the Adv
 Photon Source is available for download at https://dx.doi.org/10.18126/iidy-30e7. 
 Download the file `srn0_XTEC.nxs` (~32 GB) which has all the data needed for the 
 tutorial notebooks.
+
+## Contact info
+Any questions and comments on the code, tutorials and the use of XTEC can be directed to
+Krishnanand Mallayya (kmm537@cornell.edu)
