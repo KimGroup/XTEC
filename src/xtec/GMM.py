@@ -285,6 +285,10 @@ class GMM(object):
         data_ : array-like
             Data matrix with shape (num_data, num_T)
         """
+        
+        # log[N(data|means(k),cov(k))], dim=(num_cluster, num_data)
+        log_gaussian = self.LogGaussian(data_)                  
+
         #  cluster_prob, Ck
         self.cluster_probs = self.mixing_weights[:, np.newaxis] * self.Logp2p(
             log_gaussian
