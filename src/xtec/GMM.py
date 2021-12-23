@@ -7,7 +7,7 @@ class GMM(object):
     """Implementation of the Gaussian Mixture Model.
 
     Performes Step-wise EM (cf. Liang and Klein 2009) to cluster
-    data(num_sam, num_T).
+    data(num_data, num_T).
 
     Attributes
     ----------
@@ -18,7 +18,7 @@ class GMM(object):
         [dim=num_T for diagonal, (num_T,num_T) for full]
     cluster_assignments : array-like
         Cluster assignment k in range(num_clusters), of each sample.
-        dim=num_sam
+        dim=num_data
     num_per_cluster : array-like
         Number of samples in each cluster
     num_per_cluster : array-like
@@ -94,7 +94,7 @@ class GMM(object):
         ----------
         data : array-like
             Input data. The first axis corresponds to the number of samples
-            (num_sam), and the second to num of temperatures (num_T)
+            (num_data), and the second to num of temperatures (num_T)
         cluster_num : int
             Number of GMM clusters
         cov_type : "diagonal"| "full", optional
@@ -182,7 +182,7 @@ class GMM(object):
         label_smoothing_flag : bool, optional
             If True implements label smoothing between E and M step,
             by default False
-        Markov_matrix : <class 'scipy.sparse.csr.csr_matrix'>, optional
+        Markov_matrix : class scipy.sparse.csr.csr_matrix, optional
             Adjacency matrix for label smoothing (when smoothing_flag=True),
             by default None. Use GMM_kernels to construct Markov
             matrix with local or periodic kernel
@@ -258,7 +258,7 @@ class GMM(object):
             self.cluster[k].mean = self.means[k]
             self.cluster[k].cov = self.covs[k]
 
-        # cluster assignment of each sample,  dim=(num_sam)
+        # cluster assignment of each sample,  dim=(num_data)
         self.cluster_assignments = np.argmax(self.cluster_probs, axis=0)
 
         # number of samples within each cluster
@@ -277,11 +277,14 @@ class GMM(object):
             )
         )
 
-        # data_.shape=(num_data, num_T), num_data is sample num in the batch
-
+        
     def E_Step(self, data_):
-        # log[N(data|means(k),cov(k))], dim=(num_cluster, num_data)
-        log_gaussian = self.LogGaussian(data_)
+        """ Expectation step, evaluates the cluster probabilities
+        Parameters
+        ----------
+        data_ : array-like
+            Data matrix with shape (num_data, num_T)
+        """
         #  cluster_prob, Ck
         self.cluster_probs = self.mixing_weights[:, np.newaxis] * self.Logp2p(
             log_gaussian
@@ -291,6 +294,14 @@ class GMM(object):
         ]  # Ck = w_k*N(data|means(k),cov(k))/[sum_k w_k*N(data|..)]
 
     def M_Step(self, data_):
+        """ Maximization step, evaluates the cluster means, variance, and mixing
+        weights
+
+        Parameters
+        ----------
+        data_ : array-like
+            Data matrix with shape (num_data, num_T)
+        """
         # w_k=<Ck> averaged over data, dim=(num_clusters)
         self.mixing_weights = np.mean(self.cluster_probs, axis=1)
         weight_mask = self.mixing_weights == 0
@@ -354,12 +365,12 @@ class GMM(object):
         Parameters
         ----------
         data_ : array-like
-            Data matrix with shape (num_sam, dim)
+            Data matrix with shape (num_data, dim)
 
         Returns
         -------
         array-like
-            Log probabilities with shape (num_clusters, num_sam)
+            Log probabilities with shape (num_clusters, num_data)
         """
         log_gaussian = None
         if self.cov_type == "full":
@@ -399,7 +410,7 @@ class GMM(object):
 
         Uses a Log-sum-exp trick for avoiding numerical overflow
         """
-        # log_p shape= (num_cluster,num_sam)
+        # log_p shape= (num_cluster,num_data)
         max_logp = np.max(log_p, axis=0)[np.newaxis, :]
         # returns P_k/(\sum_k P_k)
         return np.exp(
@@ -408,7 +419,7 @@ class GMM(object):
 
     def LogLikelihood(self, data_):
         """Return Sum_data{Log[Sum_k w_k N(data|means(k),cov(k))]}"""
-        # log[N(data|means(k),cov(k))],  shape=(num_cluster, num_sam)
+        # log[N(data|means(k),cov(k))],  shape=(num_cluster, num_data)
         log_gaussian = self.LogGaussian(data_)
         return np.sum(
             self.LogSumTrick(
@@ -419,7 +430,7 @@ class GMM(object):
     def LogSumTrick(self, log_p):
         """Evaluate log-likelihood using another log-sum trick"""
         max_logp = np.max(log_p, axis=0)
-        # returns log[sum_k P_k], shape=(num_sam)
+        # returns log[sum_k P_k], shape=(num_data)
         return (
             np.log(np.sum(np.exp(log_p - max_logp[np.newaxis, :]), axis=0))
             + max_logp
@@ -449,7 +460,7 @@ class GMM(object):
     def Plot_Cluster_Results_traj(
         self, x_train, traj_flag=False, data_means=None
     ):
-        """Plots the trajectories and cluster means ± 1*variance.
+        """Plots the trajectories and cluster means ± 1*std.
 
         Parameters
         ----------
@@ -554,10 +565,12 @@ class GMM(object):
             Axis_ of slice_ind, by default None. If data is 3D, set 0
             for L plane, 1 for K plane and 2 for H plane,
         cluster_assignments : ndarray, optional
-            [description], by default None
-        cluster_list : array like, optional
-            List of cluster numbers 0,1,2 etc. to be plotted, by default None.
-            The remaining clusters if any will show as grey.
+            cluster assignments in range(cluster_num) of the data,
+            shape=(num_data), by default None.
+        cluster_list : array like, optional, by default None.
+            List of cluster numbers 0,1,2 etc. to be plotted. 
+            The remaining clusters if any will show as grey. If None,
+            all clusters are plotted.
         """
 
         import matplotlib.pyplot as plt
@@ -621,7 +634,15 @@ class GMM(object):
             )
 
     def Plot_Cluster_Results_kspace_3D(self, threshold):
-        """Plots the thresholded data coded by their cluster assignment."""
+
+        """Plots the 3D thresholded data color coded by their cluster
+        assignments.
+
+        Parameters
+        ----------
+        threshold : class Threshold_Background from Preprocessing
+        """
+
         import matplotlib.pyplot as plt
         from matplotlib import colors
 
@@ -702,7 +723,22 @@ class GMM(object):
         plt.tight_layout()
 
     def Get_pixel_labels(self, Peak_avg):
-        """Assigns the cluster label of each peak averaged trajectory."""
+        """Assigns the cluster labels of each peak averaged
+        trajectory to all the pixels that belong to a peak. 
+
+        Parameters
+        ----------
+        Peak_avg : class Peak_averaging from Preprocessing
+            Contains peak averages and pixels in each peak.
+
+        Returns
+        -------
+        Data_ind : array like, shape=(num_data,3)
+            hkl indices of all the data
+        Pixel_assignments : array like, shape=(num_data)
+            cluster assignments in range(cluster_num) of
+            all pixels in the data 
+        """
 
         Peak_avg_data = Peak_avg.peak_avg_data
         # shape=(num_temperatures, num_thresholded data)
@@ -735,7 +771,7 @@ class Cluster_Gaussian(object):
 
     def __init__(self, data):
         self.data_dim = data.shape[1]
-        # data.shape= (num_sam, num_T), data_dim=num_T
+        # data.shape= (num_data, num_T), data_dim=num_T
         self.mean = np.zeros((1, self.data_dim))
         self.cov = np.zeros((self.data_dim, self.data_dim))
 
@@ -762,7 +798,7 @@ class Cluster_Gaussian(object):
 
 
 class GMM_kernels(object):
-    """Builds the Adjacency matrix (without using multiprocessors)"""
+    """Builds the Adjacency matrix for label smoothing"""
 
     def Build_Markov_Matrix(
         data_inds,
@@ -772,14 +808,16 @@ class GMM_kernels(object):
         uniform_similarity=True,
         zero_cutoff=1e-2,
     ):
-        """Returns Markov matrix
+        """ returns the Adjacency (Markov) matrix to be used for
+        label smoothing
 
         Parameters
         ----------
         data_inds : array-like
             HKL indices (dim=3 or dim=2) of the preprocessed data
         L_scale : int, optional
-            Length scale for local correlations, by default 1
+            Length scale (in units of number of pixels) for local
+            correlations, by default 1
         kernel_type : 'local' | 'periodic', optional
             Use local or periodic correlations, by default "local"
         unit_cell_shape : array-like, optional
@@ -788,10 +826,15 @@ class GMM_kernels(object):
             if True, sets all nonzero elements of Markov matrix
             (above zero_cutoff) to 1 (with a normalization factor),
             by default True
-        zero_cutoff : [type], optional
-            Cutoff to select nonzero elements of Markov matrix, by default 1e-2
+        zero_cutoff : float, optional
+            Cutoff to select nonzero elements of Markov matrix,
+            by default 1e-2
 
+        Returns
+        -------
+        Markov matrix: class scipy.sparse.csr.csr_matrix, 
         """
+
         print("\n\tBuilding Adjacency Matrix,  ...")
         import time
 
@@ -863,43 +906,4 @@ class GMM_kernels(object):
 
         return Markov_matrix
 
-    def Get_Neighbors(full_data_shape_, data_inds_, neighbors):
-        data_ind_local = np.arange(data_inds_.shape[0])
-        padding = max(
-            abs(np.array(neighbors).max()), abs(np.array(neighbors).min())
-        )
-        full_data_shape_ = tuple([el + 2 * padding for el in full_data_shape_])
-        # pad data inds to handle case where neighbor is outside dataset
-        data_inds_ += padding
-        raveled_ind = np.ravel_multi_index(
-            data_inds_.transpose(), full_data_shape_
-        )
-        # hash all raveled thresholded global indices
-        hash_raveled = set(raveled_ind)
-        map_global_to_local = dict(zip(raveled_ind, data_ind_local))
-
-        ind_col_local_subset = []
-        ind_row_local_subset = []
-
-        for neighbor in neighbors:
-            data_shift = data_inds_ + neighbor
-            raveled_ind_shifted = np.ravel_multi_index(
-                data_shift.transpose(), full_data_shape_
-            )
-            ind_lookup_mask = np.array(
-                [ind in hash_raveled for ind in raveled_ind_shifted]
-            )
-            ind_col_global = raveled_ind[ind_lookup_mask]
-            ind_row_global = raveled_ind_shifted[ind_lookup_mask]
-            ind_col_local = [
-                map_global_to_local[ind] for ind in ind_col_global
-            ]
-            ind_row_local = [
-                map_global_to_local[ind] for ind in ind_row_global
-            ]
-            ind_col_local_subset.extend(ind_col_local)
-            ind_row_local_subset.extend(ind_row_local)
-
-        data_inds_ -= padding
-
-        return ind_col_local_subset, ind_row_local_subset
+    
