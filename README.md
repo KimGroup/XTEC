@@ -12,7 +12,7 @@ To meet this challenge, the application, *XRD Temperature Clustering (XTEC)*, us
 
 ## Methods
 
-When the temperature `T`  is lowered below a certain threshold, the system can give way to an ordered state. Hence the temperature ( `T` ) evolution of the XRD intensity for reciprocal space point  `q`,  `I(q,T)` , must be qualitatively different if the given reciprocal space point `q` reflects order parameters or their fluctuations. Tracking the temperature evolution of thousands of Brillouin zones to identify systematic trends and correlations in any comprehensive manner is impossible to achieve manually without selection bias.
+When the temperature `T`  is lowered below a certain threshold, the system can give way to an ordered state. Hence the temperature (`T`) evolution of the XRD intensity for reciprocal space point  `q`,  `I(q,T)` , must be qualitatively different if the given reciprocal space point `q` reflects order parameters or their fluctuations. Tracking the temperature evolution of thousands of Brillouin zones to identify systematic trends and correlations in any comprehensive manner is impossible to achieve manually without selection bias.
 
 *X-TEC* is an unsupervised and interpretable machine learning (ML) algorithm that can identify the order parameters and their fluctuations from the voluminous data by clustering the temperature series associated with a given `q`: `I(q,T)` , according to qualitative features in the temperature dependence.
 
@@ -53,8 +53,29 @@ To install in an alternate location:
 ## Tutorials
 
 There are three Jupyter notebooks, which can be downloaded from this
-repository to show XTEC in action. They show how XTEC identifies a 
+repository to see XTEC in action. They show how XTEC identifies a 
 charge density wave (CDW) ordering in reciprocal space from temperature 
 series voluminous XRD data collected at Advanced Photon Source on 
 Sr<sub>3</sub>Rh<sub>4</sub>Sn<sub>13</sub>: a a quasi-skutterudite 
-family which shows CDW ordering below a critical temperature.
+family which shows CDW ordering below a critical temperature. The  
+tutorials are: 
+
+1. `Tutorial_XTEC-detailed`: this performs simple GMM clustering, treating each 
+pixel independently. This mode of XTEC can distinguish the diffuse scatering, 
+hence ideal for probing fluctuations of order parameters.
+
+2. `Tutorial_XTEC-smoothed_with_label_smoothing`: ensures the cluster assignments
+in neighbouring pixels are correlated (smoothed). This mode is better suited to 
+probe order parameter peaks and their visualization in reciprocal space. 
+
+3. `Tutorial_XTEC-smoothed_with_peak_averaging`: Faster and cheaper version of 
+label smoothing by assigning connected pixels of the peaks with their peak averaged 
+intensities. Best suited to get order parameters quickly from large datasets.
+
+
+
+## Data for tutorials 
+The XRD data on Sr<sub>3</sub>Rh<sub>4</sub>Sn<sub>13</sub> collected at the Advanced
+Photon Source is available for download at https://dx.doi.org/10.18126/iidy-30e7. 
+Download the file `srn0_XTEC.nxs` (~32 GB) which has all the data needed for the 
+tutorial notebooks.
