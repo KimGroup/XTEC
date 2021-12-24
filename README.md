@@ -60,15 +60,15 @@ Sr<sub>3</sub>Rh<sub>4</sub>Sn<sub>13</sub>: a a quasi-skutterudite
 family which shows CDW ordering below a critical temperature. The  
 tutorials are: 
 
-1. `Tutorial_XTEC-detailed`: this performs simple GMM clustering, treating each 
+1. `Tutorial_XTEC-d`: this performs simple GMM clustering, treating each 
 pixel independently. This mode of XTEC can distinguish the diffuse scatering, 
 hence ideal for probing fluctuations of order parameters.
 
-2. `Tutorial_XTEC-smoothed_with_label_smoothing`: ensures the cluster assignments
+2. `Tutorial_XTEC-s_with_label_smoothing`: ensures the cluster assignments
 in neighbouring pixels are correlated (smoothed). This mode is better suited to 
 probe order parameter peaks and their visualization in reciprocal space. 
 
-3. `Tutorial_XTEC-smoothed_with_peak_averaging`: Faster and cheaper version of 
+3. `Tutorial_XTEC-s_with_peak_averaging`: Faster and cheaper version of 
 label smoothing by assigning connected pixels of the peaks with their peak averaged 
 intensities. Best suited to get order parameters quickly from large datasets.
 
