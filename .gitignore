@@ -59,4 +59,4 @@ Icon?
 .vscode
 
 # setuptools_scm
-src/nexusformat/_version.py
+src/xtec/_version.py
