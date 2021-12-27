@@ -31,9 +31,9 @@ class GMM(object):
     Examples
     --------
         1) An example to cluster with GMM without label smoothing:
-        
-        from xtec.GMM import GMM   
-        
+
+        from xtec.GMM import GMM
+
         num_clusters = 2
         clusterGMM=GMM(data, num_clusters)
         clusterGMM.RunEM()
@@ -50,10 +50,10 @@ class GMM(object):
 
         # Generate Markov matrix to be used between E and M step to
         # diffuse cluster probabilities with neighbouring data
-        
-        from xtec.GMM import GMM   
-        from xtec.GMM import GMM_kernels   
-        
+
+        from xtec.GMM import GMM
+        from xtec.GMM import GMM_kernels
+
         data_inds = threshold.ind_high_std_dev
         L_scale = 0.2
         kernel_type = 'periodic'
@@ -277,17 +277,16 @@ class GMM(object):
             )
         )
 
-        
     def E_Step(self, data_):
-        """ Expectation step, evaluates the cluster probabilities
+        """Expectation step, evaluates the cluster probabilities
         Parameters
         ----------
         data_ : array-like
             Data matrix with shape (num_data, num_T)
         """
-        
+
         # log[N(data|means(k),cov(k))], dim=(num_cluster, num_data)
-        log_gaussian = self.LogGaussian(data_)                  
+        log_gaussian = self.LogGaussian(data_)
 
         #  cluster_prob, Ck
         self.cluster_probs = self.mixing_weights[:, np.newaxis] * self.Logp2p(
@@ -298,7 +297,7 @@ class GMM(object):
         ]  # Ck = w_k*N(data|means(k),cov(k))/[sum_k w_k*N(data|..)]
 
     def M_Step(self, data_):
-        """ Maximization step, evaluates the cluster means, variance, and mixing
+        """Maximization step, evaluates the cluster means, variance, and mixing
         weights
 
         Parameters
@@ -555,7 +554,7 @@ class GMM(object):
 
         Parameters
         ----------
-        threshold : 
+        threshold :
             class Threshold_Background from Preprocessing
         figsize_ : tuple, optional,
             size of image, by default None
@@ -572,7 +571,7 @@ class GMM(object):
             cluster assignments in range(cluster_num) of the data,
             shape=(num_data), by default None.
         cluster_list : array like, optional, by default None.
-            List of cluster numbers 0,1,2 etc. to be plotted. 
+            List of cluster numbers 0,1,2 etc. to be plotted.
             The remaining clusters if any will show as grey. If None,
             all clusters are plotted.
         """
@@ -728,7 +727,7 @@ class GMM(object):
 
     def Get_pixel_labels(self, Peak_avg):
         """Assigns the cluster labels of each peak averaged
-        trajectory to all the pixels that belong to a peak. 
+        trajectory to all the pixels that belong to a peak.
 
         Parameters
         ----------
@@ -741,7 +740,7 @@ class GMM(object):
             hkl indices of all the data
         Pixel_assignments : array like, shape=(num_data)
             cluster assignments in range(cluster_num) of
-            all pixels in the data 
+            all pixels in the data
         """
 
         Peak_avg_data = Peak_avg.peak_avg_data
@@ -812,7 +811,7 @@ class GMM_kernels(object):
         uniform_similarity=True,
         zero_cutoff=1e-2,
     ):
-        """ returns the Adjacency (Markov) matrix to be used for
+        """returns the Adjacency (Markov) matrix to be used for
         label smoothing
 
         Parameters
@@ -836,7 +835,7 @@ class GMM_kernels(object):
 
         Returns
         -------
-        Markov matrix: class scipy.sparse.csr.csr_matrix, 
+        Markov matrix: class scipy.sparse.csr.csr_matrix,
         """
 
         print("\n\tBuilding Adjacency Matrix,  ...")
@@ -909,5 +908,3 @@ class GMM_kernels(object):
         )
 
         return Markov_matrix
-
-    
