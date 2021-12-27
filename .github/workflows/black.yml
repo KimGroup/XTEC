@@ -8,6 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: psf/black@stable
-      with:
-        options: "--line-length=79"
-        src: "./src/xtec"
+        with:
+          options: "--line-length=79"
+          src: "./src/xtec"
