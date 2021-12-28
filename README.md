@@ -37,19 +37,6 @@ or by cloning the Git repository and installing from source:
 ```
     $ git clone https://github.com/KimGroup/XTEC
 ```
-
-To install in the standard Python location:
-
-```
-    $ python setup.py install
-```
-
-To install in an alternate location:
-
-```
-    $ python setup.py install --prefix=/path/to/installation/dir
-```
-
 ## Tutorials
 
 There are three Jupyter notebooks, which can be downloaded from this
