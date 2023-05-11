@@ -118,6 +118,7 @@ class XTECDialog(NXDialog):
             self.defaults[p] = self.parameters[p].value
         parameters = GridParameters()
         if self.XTEC_method.selected.startswith("BIC"):
+            self.pushbutton["Cluster Data"].setText("Plot Scores")
             parameters.add(
                 "min_nc", self.defaults["min_nc"], "Min cluster num"
             )
@@ -125,6 +126,7 @@ class XTECDialog(NXDialog):
                 "max_nc", self.defaults["max_nc"], "Max cluster num"
             )
         else:
+            self.pushbutton["Cluster Data"].setText("Cluster Data")
             parameters.add(
                 "n_cluster", self.defaults["n_cluster"], "Number of Clusters"
             )
@@ -344,6 +346,7 @@ class XTECDialog(NXDialog):
         self.enable_plots(enable=True)
 
     def BIC_XTEC_d(self):
+        self.enable_plots(enable=False)
         nc_min = int(self.parameters["min_nc"].value)
         nc_max = int(self.parameters["max_nc"].value)
 
@@ -381,6 +384,7 @@ class XTECDialog(NXDialog):
         y_data.plot(fmt="-", lw=2, marker="o", markersize=4)
 
     def BIC_XTEC_s(self):
+        self.enable_plots(enable=False)
         nc_min = int(self.parameters["min_nc"].value)
         nc_max = int(self.parameters["max_nc"].value)
 
