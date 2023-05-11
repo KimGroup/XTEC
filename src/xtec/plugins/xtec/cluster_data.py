@@ -72,7 +72,9 @@ class XTECDialog(NXDialog):
                     "BIC XTEC-s (peak avg)",
                 ],
             )
-
+            plot_button_layout = self.action_buttons(
+                ("Cluster Data", self.select_method)
+            )
             self.insert_layout(1, self.make_layout(axis_grid, align="center"))
             self.insert_layout(
                 2, self.make_layout(self.XTEC_method, align="center")
@@ -82,10 +84,7 @@ class XTECDialog(NXDialog):
                 3, self.make_layout(self.parameters.grid(), align="center")
             )
             self.parameters.grid_layout.setHorizontalSpacing(20)
-            self.insert_layout(
-                4,
-                self.action_buttons(("Cluster Data", self.select_method)),
-            )
+            self.insert_layout(4, plot_button_layout)
             self.insert_layout(
                 5,
                 self.action_buttons(
