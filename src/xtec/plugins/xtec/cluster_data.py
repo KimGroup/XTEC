@@ -232,6 +232,7 @@ class XTECDialog(NXDialog):
     def XTEC_s_PA(self):
         self.enable_plots(enable=False)
         self.nc = int(self.parameters["n_cluster"].value)
+
         if self.parameters["threshold"].value == "Yes":
             thresh_type = "KL"
         else:
@@ -349,7 +350,11 @@ class XTECDialog(NXDialog):
         nc_min = int(self.parameters["min_nc"].value)
         nc_max = int(self.parameters["max_nc"].value)
 
-        thresh_type = self.parameters["threshold"].value
+        if self.parameters["threshold"].value == "Yes":
+            thresh_type = "KL"
+        else:
+            thresh_type = "No threshold"
+
         masked = Mask_Zeros(self.data.nxsignal.nxvalue)
         threshold = Threshold_Background(masked, threshold_type=thresh_type)
 
@@ -387,7 +392,11 @@ class XTECDialog(NXDialog):
         nc_min = int(self.parameters["min_nc"].value)
         nc_max = int(self.parameters["max_nc"].value)
 
-        thresh_type = self.parameters["threshold"].value
+        if self.parameters["threshold"].value == "Yes":
+            thresh_type = "KL"
+        else:
+            thresh_type = "No threshold"
+
         masked = Mask_Zeros(self.data.nxsignal.nxvalue)
         threshold = Threshold_Background(masked, threshold_type=thresh_type)
         Peak_avg = Peak_averaging(self.data.nxsignal.nxvalue, threshold)
