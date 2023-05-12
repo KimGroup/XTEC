@@ -139,10 +139,10 @@ class XTECDialog(NXDialog):
             parameters.add(
                 "L_scale",
                 self.defaults["L_scale"],
-                "Smoothen length (pixel units)",
+                "Smoothing length (pixel units)",
             )
             parameters.add(
-                "smooth_type", ["local", "periodic"], "Smoothen type"
+                "smooth_type", ["local", "periodic"], "Smoothing type"
             )
             parameters["smooth_type"].value = self.defaults["smooth_type"]
         return parameters
