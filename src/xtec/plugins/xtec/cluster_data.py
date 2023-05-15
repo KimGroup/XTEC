@@ -449,13 +449,11 @@ class XTECDialog(NXDialog):
         self.image_data.plot(cmap="xtec")
 
     def plot_trajectories(self):
-        cluster_means = self.cluster_means
-        cluster_covs = self.cluster_covs
         rescale = self.parameters["rescale"].value
         xc = self.data.nxaxes[0]
         for i in range(self.nc):
-            yc = cluster_means[i]
-            yc_std = (cluster_covs[i]) ** 0.5
+            yc = self.cluster_means[i]
+            yc_std = (self.cluster_covs[i]) ** 0.5
             yc_data = NXdata(
                 NXfield(yc, name=f"cluster{i+1}"),
                 xc,
@@ -470,7 +468,7 @@ class XTECDialog(NXDialog):
                 yc_data.oplot(
                     fmt="-", color=f"C{i}", lw=3, marker="o", markersize=3
                 )
-            self.plotview.ax.fill_between(
+            self.mainwindow.active_plotview.ax.fill_between(
                 xc.nxvalue, yc - yc_std, yc + yc_std, color=f"C{i}", alpha=0.4
             )
 
