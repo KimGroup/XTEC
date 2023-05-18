@@ -1,10 +1,8 @@
-from . import GMM_clustering, BIC_score
+from . import cluster_data
 
 
 def plugin_menu():
     menu = "XTEC"
-    actions = []
-    actions.append(("XTEC", GMM_clustering.show_dialog))
-    actions.append(("BIC score", BIC_score.show_dialog))
+    actions = [(("Cluster Data", cluster_data.show_dialog))]
 
     return menu, actions
