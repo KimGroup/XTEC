@@ -57,7 +57,7 @@ class GMM(object):
         self,
         data,
         cluster_num,
-        cov_type="diagonal", 
+        cov_type="diag", 
         n_init=1, 
         tol=1e-4,
         reg_covar=1e-06,
@@ -160,6 +160,11 @@ class GMM(object):
             for k in range(self.cluster_num)
         ]
         
+        self.cluster=[]
+        for k in range(self.cluster_num):
+            cluster_mean=self.means[k]
+            cluster_cov=self.covs[k]
+            self.cluster.append(Cluster_Gaussian(cluster_mean,cluster_cov))
     def Plot_Cluster_Results_traj(
         self, x_train, traj_flag=False, data_means=None
     ):
@@ -459,4 +464,17 @@ class GMM(object):
 
         self.Pixel_assignments = np.vstack(Pixel_assignments).flatten()
 
+class Cluster_Gaussian(object):
+    """
+    Attributes
+    ----------
+    mean : array-like
+        Mean of gaussian, dim=num_T
+    cov : array-like
+        Sample covariance (diagonal), dim = num_T.
+    """
 
+    def __init__(self, mean,cov):
+        self.mean = mean
+        self.cov=np.diag(cov) if cov.ndim == 2 else cov
+        
