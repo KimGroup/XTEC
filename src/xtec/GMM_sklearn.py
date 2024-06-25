@@ -125,7 +125,7 @@ class GMM(object):
             means_init=means_init, 
             precisions_init=precisions_init,
             random_state=random_state, 
-            warm_start=warm_state,
+            warm_start=warm_start,
             verbose=verbose, 
             verbose_interval=verbose_interval
         )
