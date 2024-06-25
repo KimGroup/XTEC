@@ -120,7 +120,7 @@ class Threshold_Background(object):
         HKL indices of low var trajectories
     """
 
-    def __init__(self, mask, bin_size=None, threshold_type="KL", max_iter=100):
+    def __init__(self, mask, bin_size=None, threshold_type="KL", max_iter=100,set_cutoff=-1e6):
         """Initialize the threshold settings.
 
         Parameters
@@ -138,6 +138,7 @@ class Threshold_Background(object):
              'no thresh' sets the cutoff to 0.
         max_iter : int, optional
             Maximum number of iterations, by default 100
+        set_cutoff: manually set cutoff for Threshold type "no thresh"
         """
         #  shape=(num_T, num_data), the  input data to be thresholded.
         data = mask.data_nonzero
@@ -157,10 +158,11 @@ class Threshold_Background(object):
             self.bin_size = self.Freedman_Diaconis_for_bin_width(
                 logData_mean_sorted
             )
-        self.y_bins, self.x_bins = self.hist(logData_mean, self.bin_size)
+            
         # becomes true only when thresholding is successful and complete
         self.success = False
         if self.threshold_type == "KL":
+            self.y_bins, self.x_bins = self.hist(logData_mean, self.bin_size)
             try:
                 self.optimal_x_ind_cut = self.Truncate(
                     self.x_bins, self.y_bins, logData_mean_sorted, max_iter
@@ -198,8 +200,9 @@ class Threshold_Background(object):
             self.naive_std = np.std(logData_mean_sorted)
             self.LogI_cutoff = self.naive_mean + 2 * self.naive_std
         else:
-            print("No thresholding performed")
-            self.LogI_cutoff = -1e6
+            #print("No thresholding performed")
+            #self.LogI_cutoff = -1e6
+            self.LogI_cutoff = set_cutoff
 
         self.mask_threshold = (
             logData_mean > self.LogI_cutoff
@@ -249,6 +252,7 @@ class Threshold_Background(object):
         self.ind_high_std_dev = self.ind_thresholded[mask_std_dev]
         self.data_low_std_dev = data[:, ~mask_std_dev]
         self.ind_low_std_dev = self.ind_thresholded[~mask_std_dev]
+        self.mask_std_dev= mask_std_dev
 
     def Gaussian(self, x, mean, std_dev):
         """Evaluates Gaussian(x)= N(x|mean, std_dev)
@@ -501,6 +505,7 @@ class Threshold_Background(object):
         plt.tight_layout()
 
 
+
 class Peak_averaging(object):
     """Averages intensities within each peak.
 
@@ -542,6 +547,10 @@ class Peak_averaging(object):
 
         P_avg_data = []
         P_avg_ind_list = []
+        
+        P_max_data = []
+        P_max_ind_list = []
+        
         for i in range(1, num_features + 1):
             label_i = np.isin(labeled_array, i)
             data_i = intensity[:, label_i]
@@ -550,7 +559,17 @@ class Peak_averaging(object):
             peak_avg_i = np.mean(data_i, axis=1)
             P_avg_data.append(peak_avg_i)
             P_avg_ind_list.append(ind_i)
+            
+            peak_max_i = np.amax(data_i, axis=1)
+            P_max_data.append(peak_max_i)
+            P_max_ind_list.append(ind_i)
+            
 
         # shape=(num_T, num_peak avg data)
         self.peak_avg_data = np.vstack(P_avg_data).transpose()
         self.peak_avg_ind_list = P_avg_ind_list
+        
+        self.peak_max_data = np.vstack(P_max_data).transpose()
+        self.peak_max_ind_list = P_max_ind_list
+        
+        
