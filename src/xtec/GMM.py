@@ -87,6 +87,7 @@ class GMM(object):
         max_batch_epoch=50,
         max_full_epoch=500,
         verbose=False,
+        color_list=None
     ):
         """Initialize GMM parameters
 
@@ -113,6 +114,17 @@ class GMM(object):
         verbose : bool, optional
             If True, print loglikelihood at each iteration, by default False
         """
+        if(color_list):
+            self.color_list=color_list
+        else:
+            self.color_list=["red",
+                             "blue",
+                             "green",
+                             "purple",
+                             "yellow",
+                             "orange",
+                             "pink",
+                            ]
         self.cluster = []
         self.cluster_num = cluster_num
         self.cov_type = cov_type
@@ -479,18 +491,10 @@ class GMM(object):
         """
         import matplotlib.pyplot as plt
 
-        if self.cluster_num > 7:
-            print("Error: Plotting for less than 7 clusters currently enabled")
+        if self.cluster_num > len(self.color_list):
+            print("Error: more clusters than cluster color labels")
         else:
-            color_list = [
-                "red",
-                "blue",
-                "green",
-                "purple",
-                "yellow",
-                "orange",
-                "pink",
-            ]
+            color_list = self.color_list
 
             if traj_flag is True:
                 plt.figure()
@@ -604,17 +608,8 @@ class GMM(object):
                     cluster_ind[:, 0], cluster_ind[:, 1], cluster_ind[:, 2]
                 ] = (k + 2)
 
-        color_list = [
-            "white",
-            "lightgrey",
-            "red",
-            "blue",
-            "green",
-            "purple",
-            "yellow",
-            "orange",
-            "pink",
-        ]
+        color_list = ["white","lightgrey"]+self.color_list
+         
         cluster_cmap = colors.ListedColormap(color_list)
 
         bounds = []
@@ -683,17 +678,8 @@ class GMM(object):
             ] = True
             masks.append(cluster_kspace_mask.reshape(np.prod(data_shape)))
 
-        color_list = [
-            "white",
-            "lightgrey",
-            "red",
-            "blue",
-            "green",
-            "purple",
-            "yellow",
-            "orange",
-            "pink",
-        ]
+        color_list = ["white","lightgrey"]+self.color_list
+         
 
         RGBs = [colors.to_rgb(color) for color in color_list]
 
